@@ -4,16 +4,59 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 public class LifecycleActivity extends Activity {
+
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lifecycle);
+        textView = (TextView) findViewById(R.id.textView);
+        textView.append("Create event fired\n");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        textView.append("Destroy event fired\n");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        textView.append("Start event fired\n");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        textView.append("Stop event fired\n");
+    }
+
+    @Override
+    protected void onRestart() {
+        // Fires for every start event, except the first one, i.e., a "true" restart
+        super.onRestart();
+        textView.append("Restart event fired\n");
+    }
+
+    @Override
+    protected void onResume() {
+        // In the foreground
+        super.onResume();
+        textView.append("Resume event fired\n");
+    }
+
+    @Override
+    protected void onPause() {
+        // In the background
+        super.onPause();
+        textView.append("Pause event fired\n");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
