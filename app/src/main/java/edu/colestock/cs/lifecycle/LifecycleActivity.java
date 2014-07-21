@@ -5,57 +5,79 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
+import java.util.Date;
 
 public class LifecycleActivity extends Activity {
 
+    private final static String TEXT_VIEW_KEY = "textView";
+    private final static String EVENT_COUNTER_KEY = "eventCounter";
+
     private TextView textView;
+    private int eventCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lifecycle);
         textView = (TextView) findViewById(R.id.textView);
-        textView.append("Create event fired\n");
+        if(savedInstanceState != null) {
+            textView.setText(savedInstanceState.getCharSequence(LifecycleActivity.TEXT_VIEW_KEY));
+            eventCounter = savedInstanceState.getInt(LifecycleActivity.EVENT_COUNTER_KEY);
+        }
+        recordEvent("Create");
+    }
+
+    // Event responsible for appending to screen the event that happened, when, in which order, etc.
+    private void recordEvent(String eventName) {
+        eventCounter++;
+        textView.setText("#" + String.valueOf(eventCounter) + " " + eventName.toUpperCase() + " EVENT FIRED: " + new Date().toString() + "\n" + textView.getText());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        textView.append("Destroy event fired\n");
+        recordEvent("Destroy");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        textView.append("Start event fired\n");
+        recordEvent("Start");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        textView.append("Stop event fired\n");
+        recordEvent("Stop");
     }
 
     @Override
     protected void onRestart() {
         // Fires for every start event, except the first one, i.e., a "true" restart
         super.onRestart();
-        textView.append("Restart event fired\n");
+        recordEvent("Restart");
     }
 
     @Override
     protected void onResume() {
         // In the foreground
         super.onResume();
-        textView.append("Resume event fired\n");
+        recordEvent("Resume");
     }
 
     @Override
     protected void onPause() {
         // In the background
         super.onPause();
-        textView.append("Pause event fired\n");
+        recordEvent("Pause");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // Add current value of TextView and int, used to record events, to the key and save its current contents...
+        outState.putCharSequence(LifecycleActivity.TEXT_VIEW_KEY, textView.getText());
+        outState.putInt(LifecycleActivity.EVENT_COUNTER_KEY, eventCounter);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
